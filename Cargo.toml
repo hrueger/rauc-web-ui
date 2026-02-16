@@ -1,0 +1,15 @@
+[package]
+name = "rauc-web-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = { version = "0.5", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["process", "io-util", "fs"] }
+tokio-stream = "0.1"
+async-stream = "0.3"
+dotenvy = "0.15"
+rust-embed = "8.2"
+mime_guess = "2.0"
