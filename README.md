@@ -49,6 +49,36 @@ This will:
 
 1. Open http://localhost:8000 in your browser
 
+## Yocto/OpenEmbedded Integration
+
+This repository includes a Yocto layer for building RAUC Web UI in embedded Linux images.
+
+### Adding the Layer
+
+Add the `meta-rauc-web-ui` layer to your Yocto build configuration:
+
+**Using bblayers.conf:**
+
+```bitbake
+BBLAYERS += "/path/to/rauc-web-ui/meta-rauc-web-ui"
+```
+
+**Using kas:**
+
+```yaml
+repos:
+    rauc-web-ui:
+        url: https://github.com/hrueger/rauc-web-ui.git
+        layers:
+            meta-rauc-web-ui:
+```
+
+### Building for Yocto
+
+The Yocto recipe builds the Svelte UI on the build host (not the target), avoiding pnpm/Node.js dependencies on the embedded device. The `SKIP_UI_BUILD` environment variable is automatically set during Yocto builds to prevent the Rust build script from attempting to rebuild the UI.
+
+See [meta-rauc-web-ui/README.md](meta-rauc-web-ui/README.md) for more details.
+
 ## Configuration Variables
 
 - `SSH_HOST`: SSH host for remote development (e.g., `root@172.16.220.172`) - Optional

@@ -1,0 +1,17 @@
+[Unit]
+Description=RAUC Web UI Service
+Documentation=https://github.com/hrueger/rauc-web-ui
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rauc-web-ui
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=/etc/rauc-web-ui/config.env
+WorkingDirectory=/usr/share/rauc-web-ui
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

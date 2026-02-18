@@ -1,0 +1,25 @@
+{
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/sources/poky/bitbake/lib",
+        "${workspaceFolder}/sources/poky/meta/lib"
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/sources/poky/bitbake/lib",
+        "${workspaceFolder}/sources/poky/meta/lib"
+    ],
+    "files.associations": {
+        "*.json": "json",
+        "*.gt": "json",
+        ".env": "dotenv",
+        "*.mdx": "markdown",
+        "*.dts": "typescript",
+        "*.toml": "toml",
+        "*.example": "typescript",
+        "*.pde": "java",
+        ".dev.vars": "ini",
+        "*.sql": "sql",
+        "*.env": "ini",
+        "*.conf": "bitbake",
+        "*.inc": "bitbake"
+    }
+}
