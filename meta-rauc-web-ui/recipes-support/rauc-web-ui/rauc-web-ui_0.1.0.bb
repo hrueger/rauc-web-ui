@@ -19,15 +19,19 @@ SRC_URI = "git://github.com/hrueger/rauc-web-ui.git;branch=main;protocol=https \
 
 SRCREV = "${AUTOREV}"
 
+# remap all paths because nothing must link to the tmpdir
+EXTRA_RUSTFLAGS = "--remap-path-prefix=${WORKDIR}=/usr/src/rauc-web-ui --remap-path-prefix=${S}=/usr/src/rauc-web-ui"
+
 # Set environment variable to skip UI build in build.rs
 # since we're building it separately on the host
 export SKIP_UI_BUILD = "1"
+export CI = "true"
 
 # Build the UI before the Rust compilation
 do_compile:prepend() {
     cd ${S}/ui
     bbnote "Building Svelte UI with pnpm on build host..."
-    
+
     # Install pnpm globally using npm
     npm install -g pnpm
     
