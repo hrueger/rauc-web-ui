@@ -220,7 +220,7 @@ fn rocket() -> _ {
         }
     };
 
-    let rauc_client = RaucClient::new(mode);
+    let rauc_client = RaucClient::new(mode.clone());
 
     // Get upload directory from env or use default
     let upload_dir = env::var("UPLOAD_TMP_DIR")
@@ -249,6 +249,19 @@ fn rocket() -> _ {
         web_ui_foreground_color,
     };
 
+    // Get port from environment or use default
+    let port = env::var("PORT")
+        .or_else(|_| env::var("ROCKET_PORT"))
+        .ok()
+        .and_then(|p| p.parse::<u16>().ok())
+        .unwrap_or(8000);
+
+    let address = (match mode {
+        RaucMode::Production { .. } => "0.0.0.0",
+        _ => "127.0.0.1",
+    })
+    .parse()
+    .unwrap();
     rocket::build()
         .manage(rauc_client)
         .manage(app_config)
@@ -256,6 +269,8 @@ fn rocket() -> _ {
             limits: Limits::default()
                 .limit("file", 512.mebibytes())
                 .limit("data-form", 512.mebibytes()),
+            address,
+            port,
             ..Default::default()
         })
         .mount(
