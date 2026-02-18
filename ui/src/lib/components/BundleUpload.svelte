@@ -90,8 +90,8 @@
 
 <div class="bg-card overflow-hidden shadow sm:rounded-lg">
 	<div class="border-subtle border-b px-4 py-5 sm:px-6">
-		<h2 class="text-primary text-lg leading-6 font-medium">Upload Bundle</h2>
-		<p class="text-secondary mt-1 text-sm">Select and upload a RAUC update bundle</p>
+		<h2 class="text-primary text-lg leading-6 font-medium">Upload Update Bundle</h2>
+		<p class="text-secondary mt-1 text-sm">Select and upload an update bundle</p>
 	</div>
 
 	<div class="px-4 py-5 sm:p-6">
@@ -108,7 +108,7 @@
 					<input
 						type="file"
 						class="sr-only"
-						accept=".raucb,.rauc"
+						accept=".raucb"
 						onchange={handleFileChange}
 						disabled={uploading}
 					/>

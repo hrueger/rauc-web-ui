@@ -167,7 +167,7 @@ fn api_install(client: &State<RaucClient>, config: &State<AppConfig>) -> TextStr
     let bundle_path = config
         .bundle_path
         .to_str()
-        .unwrap_or("/data/tmp/upload_bundle.rauc")
+        .unwrap_or("/tmp/rauc-bundles/upload_bundle.raucb")
         .to_string();
     let client = client.inner().clone();
 
@@ -224,12 +224,12 @@ fn rocket() -> _ {
 
     // Get upload directory from env or use default
     let upload_dir = env::var("UPLOAD_TMP_DIR")
-        .unwrap_or_else(|_| "/data/tmp".to_string())
+        .unwrap_or_else(|_| "/tmp/rauc-bundles".to_string())
         .into();
 
     let bundle_path = env::var("UPLOAD_TMP_DIR")
-        .map(|dir| PathBuf::from(dir).join("upload_bundle.rauc"))
-        .unwrap_or_else(|_| PathBuf::from("/data/tmp/upload_bundle.rauc"));
+        .map(|dir| PathBuf::from(dir).join("upload_bundle.raucb"))
+        .unwrap_or_else(|_| PathBuf::from("/tmp/rauc-bundles/upload_bundle.raucb"));
 
     // Get theming configuration
     let web_ui_title = env::var("WEB_UI_TITLE").unwrap_or_else(|_| "Firmware Updater".to_string());
