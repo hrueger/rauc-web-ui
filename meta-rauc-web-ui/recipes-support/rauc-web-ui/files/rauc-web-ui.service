@@ -9,7 +9,6 @@ ExecStart=/usr/bin/rauc-web-ui
 Restart=on-failure
 RestartSec=10
 EnvironmentFile=/etc/rauc-web-ui/config.env
-WorkingDirectory=/usr/share/rauc-web-ui
 StandardOutput=journal
 StandardError=journal
 
