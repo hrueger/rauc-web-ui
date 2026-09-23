@@ -17,7 +17,7 @@ SRC_URI = "git://github.com/hrueger/rauc-web-ui.git;branch=main;protocol=https \
            file://config.env \
           "
 
-SRCREV = "${AUTOREV}"
+SRCREV = "f94d785c1860066100efdd32de1a29fe91eba9cb"
 
 # remap all paths because nothing must link to the tmpdir
 EXTRA_RUSTFLAGS = "--remap-path-prefix=${WORKDIR}=/usr/src/rauc-web-ui --remap-path-prefix=${S}=/usr/src/rauc-web-ui"
@@ -33,7 +33,7 @@ do_compile:prepend() {
     bbnote "Building Svelte UI with pnpm on build host..."
 
     # Install pnpm globally using npm
-    npm install -g pnpm
+    npm install -g pnpm@12.6.0
     
     # Build the UI
     pnpm install
