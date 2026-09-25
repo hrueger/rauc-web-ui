@@ -21,6 +21,10 @@ SRCREV = "7b7f18d5f33bc23b85e07263910b6851a7d26a9a"
 
 # remap all paths because nothing must link to the tmpdir
 EXTRA_RUSTFLAGS = "--remap-path-prefix=${WORKDIR}=/usr/src/rauc-web-ui --remap-path-prefix=${S}=/usr/src/rauc-web-ui"
+# The debug symbols still name build paths of the crates in the cargo registry and the Rust sysroot (reqwest and
+# rustls brought more of them), which the remap above does not reach. Only the -dbg package carries them, and it
+# never goes into an image.
+INSANE_SKIP:${PN}-dbg += "buildpaths"
 
 # Set environment variable to skip UI build in build.rs
 # since we're building it separately on the host
