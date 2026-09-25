@@ -17,7 +17,7 @@ SRC_URI = "git://github.com/hrueger/rauc-web-ui.git;branch=main;protocol=https \
            file://config.env \
           "
 
-SRCREV = "f94d785c1860066100efdd32de1a29fe91eba9cb"
+SRCREV = "7b7f18d5f33bc23b85e07263910b6851a7d26a9a"
 
 # remap all paths because nothing must link to the tmpdir
 EXTRA_RUSTFLAGS = "--remap-path-prefix=${WORKDIR}=/usr/src/rauc-web-ui --remap-path-prefix=${S}=/usr/src/rauc-web-ui"
