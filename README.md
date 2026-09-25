@@ -49,6 +49,35 @@ This will:
 
 1. Open http://localhost:8000 in your browser
 
+## Online updates
+
+With `UPDATE_MANIFEST_URL` set, the page shows the newest bundle for this system and installs it straight from its URL. RAUC streams the bundle over HTTP, so it never has to fit into `UPLOAD_TMP_DIR`. That needs a bundle in the `verity` format and RAUC built with streaming support (meta-rauc's default).
+
+The manifest lists one bundle per compatible:
+
+```json
+{
+    "bundles": [
+        {
+            "compatible": "my-device-raspberrypi5",
+            "version": "1.4.0",
+            "url": "https://downloads.example.com/my-device/1.4.0/bundle.raucb",
+            "sha256": "…",
+            "size": 123456789,
+            "notes": "What changed",
+            "publishedAt": "2026-09-25T12:00:00Z"
+        }
+    ]
+}
+```
+
+The version installed is the booted slot's bundle version from `rauc status`, or `VERSION_ID` of `/etc/os-release` for a slot written by the image rather than by RAUC. Only `https://` bundle URLs are accepted unless `ALLOW_HTTP_BUNDLE_URLS=1`. RAUC checks the signature as with any other bundle.
+
+API, for other programs on the device:
+
+- `GET /api/update-check`: `{ manifestUrl, compatible, bootedSlot, bootedVersion, latest, available }`, 404 without a manifest URL, 502 when the manifest is not reachable.
+- `POST /api/install-url` with `{ "url": "https://…" }`: installs from the URL and answers with the same text stream as `GET /api/install` (`[OUT]`, `[ERR]`, `[DONE]`, `[ERROR]` lines).
+
 ## Yocto/OpenEmbedded Integration
 
 This repository includes a Yocto layer for building RAUC Web UI in embedded Linux images.

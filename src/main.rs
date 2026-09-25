@@ -2,6 +2,7 @@
 extern crate rocket;
 
 mod rauc;
+mod update;
 
 use rauc::{RaucBundleInfo, RaucClient, RaucMode, RaucStatus};
 use rocket::data::{Limits, ToByteUnit};
@@ -188,6 +189,55 @@ fn api_install(client: &State<RaucClient>, config: &State<AppConfig>) -> TextStr
     }
 }
 
+/// Whether the manifest at UPDATE_MANIFEST_URL has a newer bundle for this
+/// system. 404 while no manifest is configured.
+#[get("/api/update-check")]
+async fn api_update_check(client: &State<RaucClient>) -> Result<Json<update::UpdateCheck>, (Status, String)> {
+    let url = update::manifest_url()
+        .ok_or_else(|| (Status::NotFound, format!("{} is not set", update::MANIFEST_URL_ENV)))?;
+    let status = client
+        .get_status()
+        .await
+        .map_err(|e| (Status::InternalServerError, e))?;
+    let manifest = update::fetch_manifest(&url)
+        .await
+        .map_err(|e| (Status::BadGateway, e))?;
+    Ok(Json(update::check(url, manifest, &status)))
+}
+
+#[derive(serde::Deserialize)]
+struct InstallUrl {
+    url: String,
+}
+
+/// Installs a bundle straight from its URL; RAUC streams it. The output is
+/// the same text stream as /api/install.
+#[post("/api/install-url", data = "<request>")]
+fn api_install_url(
+    request: Json<InstallUrl>,
+    client: &State<RaucClient>,
+) -> Result<TextStream![String], (Status, String)> {
+    let url = request.url.trim().to_string();
+    update::validate_bundle_url(&url).map_err(|e| (Status::BadRequest, e))?;
+    let client = client.inner().clone();
+
+    Ok(TextStream! {
+        match client.install_bundle(&url).await {
+            Ok(stream) => {
+                for await result in stream {
+                    match result {
+                        Ok(line) => yield line,
+                        Err(e) => yield format!("[ERROR] {}\n", e),
+                    }
+                }
+            }
+            Err(e) => {
+                yield format!("[ERROR] Failed to start installation: {}\n", e);
+            }
+        }
+    })
+}
+
 #[post("/api/reboot")]
 async fn api_reboot(client: &State<RaucClient>) -> Result<String, (Status, String)> {
     client
@@ -282,6 +332,8 @@ fn rocket() -> _ {
                 api_upload,
                 api_bundle_info,
                 api_install,
+                api_update_check,
+                api_install_url,
                 api_reboot
             ],
         )

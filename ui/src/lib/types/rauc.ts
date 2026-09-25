@@ -42,3 +42,22 @@ export interface AppConfig {
 	foreground_color: string;
 	primary_color: string;
 }
+
+export interface ManifestBundle {
+	compatible: string;
+	version: string;
+	url: string;
+	sha256?: string;
+	size?: number;
+	notes?: string;
+	publishedAt?: string;
+}
+
+export interface UpdateCheck {
+	manifestUrl: string;
+	compatible: string;
+	bootedSlot: string | null;
+	bootedVersion: string | null;
+	latest: ManifestBundle | null;
+	available: boolean;
+}

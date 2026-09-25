@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { SystemStatus, BundleUpload, BundleInfo, InstallProgress } from '$lib/components';
+	import { SystemStatus, BundleUpload, BundleInfo, InstallProgress, OnlineUpdate } from '$lib/components';
 
 	type View = 'upload' | 'bundle-info' | 'install';
 
 	let currentView = $state<View>('upload');
+	/** Set when the install streams a bundle from the update manifest. */
+	let installUrl = $state<string | undefined>(undefined);
 
 	function handleUploadSuccess() {
 		currentView = 'bundle-info';
@@ -14,6 +16,12 @@
 	}
 
 	function handleInstall() {
+		installUrl = undefined;
+		currentView = 'install';
+	}
+
+	function handleInstallFromUrl(url: string) {
+		installUrl = url;
 		currentView = 'install';
 	}
 </script>
@@ -28,12 +36,15 @@
 		</div>
 
 		<div class="space-y-6">
+			{#if currentView !== 'install'}
+				<OnlineUpdate onInstall={handleInstallFromUrl} />
+			{/if}
 			{#if currentView === 'upload'}
 				<BundleUpload onUploadSuccess={handleUploadSuccess} />
 			{:else if currentView === 'bundle-info'}
 				<BundleInfo onInstall={handleInstall} onUploadDifferent={handleUploadDifferent} />
 			{:else if currentView === 'install'}
-				<InstallProgress />
+				<InstallProgress url={installUrl} />
 			{/if}
 			<SystemStatus />
 		</div>

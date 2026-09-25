@@ -2,6 +2,13 @@
 	import { installBundle, rebootSystem } from '$lib/api';
 	import { onMount } from 'svelte';
 
+	interface Props {
+		/** Install from this URL instead of the uploaded bundle. */
+		url?: string;
+	}
+
+	let { url }: Props = $props();
+
 	let installOutput = $state('');
 	let installing = $state(false);
 	let installSuccess = $state(false);
@@ -28,7 +35,7 @@
 		installOutput = 'Starting installation...\n';
 
 		try {
-			for await (const chunk of installBundle()) {
+			for await (const chunk of installBundle(url)) {
 				installOutput += chunk;
 				if (chunk.includes('[DONE]')) {
 					installSuccess = true;

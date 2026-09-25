@@ -1,4 +1,4 @@
-import type { RaucStatus, RaucBundleInfo } from '$lib/types/rauc';
+import type { RaucStatus, RaucBundleInfo, UpdateCheck } from '$lib/types/rauc';
 
 export async function fetchStatus(): Promise<RaucStatus> {
 	const response = await fetch('/api/status');
@@ -34,8 +34,28 @@ export async function fetchBundleInfo(): Promise<RaucBundleInfo> {
 	return response.json();
 }
 
-export async function* installBundle(): AsyncGenerator<string, void, unknown> {
-	const response = await fetch('/api/install');
+/** `null` when no UPDATE_MANIFEST_URL is configured. */
+export async function checkForUpdate(): Promise<UpdateCheck | null> {
+	const response = await fetch('/api/update-check', { cache: 'no-cache' });
+	if (response.status === 404) return null;
+	if (!response.ok) {
+		throw new Error(await response.text());
+	}
+	return response.json();
+}
+
+/** Installs the uploaded bundle, or with `url` a bundle streamed from there. */
+export async function* installBundle(url?: string): AsyncGenerator<string, void, unknown> {
+	const response = url
+		? await fetch('/api/install-url', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ url })
+			})
+		: await fetch('/api/install');
+	if (!response.ok) {
+		throw new Error(await response.text());
+	}
 	if (!response.body) {
 		throw new Error('No response body');
 	}
