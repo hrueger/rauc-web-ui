@@ -19,6 +19,9 @@
         ".dev.vars": "ini",
         "*.sql": "sql",
         "*.env": "ini",
+        "*.snip": "json",
+        "*.show": "json",
+        "*.snap": "json",
         "*.conf": "bitbake",
         "*.inc": "bitbake"
     }
